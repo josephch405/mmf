@@ -58,7 +58,8 @@ def fetch_requirements():
 
 
 def remove_specific_requirements(reqs):
-    excluded = {"fasttext": "READTHEDOCS" in os.environ}
+    rtd = "READTHEDOCS" in os.environ
+    excluded = {"fasttext": rtd, "tensorboard": rtd}
     updated_reqs = []
     for req in reqs:
         without_version = req.split("==")[0]
