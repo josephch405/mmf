@@ -39,8 +39,8 @@ def load_pretrained_model(model_name_or_path, *args, **kwargs):
     else:
         download_path = download_pretrained_model(model_name_or_path, *args, **kwargs)
         model_name = model_name_or_path
-
-    configs = glob.glob(os.path.join(download_path, "*.yaml"))
+    config_folder_path = os.path.dirname(download_path)
+    configs = glob.glob(os.path.join(config_folder_path, "*.yaml"))
     assert len(configs) <= 1, (
         "Multiple yaml files with the pretrained model. "
         + "MMF doesn't know what to do."
@@ -49,7 +49,10 @@ def load_pretrained_model(model_name_or_path, *args, **kwargs):
     ckpts = []
     allowed_ckpt_types = ("*.ckpt", "*.pth", "*.pt")
     for ckpt_type in allowed_ckpt_types:
-        ckpts.extend(glob.glob(os.path.join(download_path, ckpt_type)))
+        if download_path.endswith(ckpt_type.split("*")[1]):
+            ckpts.extend(glob.glob(download_path))
+        else:
+            ckpts.extend(glob.glob(os.path.join(download_path, ckpt_type)))
 
     assert (
         len(ckpts) == 1
